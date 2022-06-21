@@ -22,6 +22,13 @@ type InsertData struct {
 }
 
 func (i *InsertData) Insert() error {
+	defer func(d *InsertData) {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+			fmt.Printf("%+v\n", i)
+		}
+	}(i)
+
 	tx, _ := ck.DB.Begin()
 	var values []string
 	for n := 0; n < len(i.Columns); n++ {
