@@ -1,43 +1,36 @@
-/*
-* @Author: wangqilong
-* @Description:
-* @File: clickhouse
-* @Date: 2021/11/30 11:04 上午
- */
-
 package ck
 
 import (
-	"database/sql"
-	"dbproxy/utils/config"
-	"dbproxy/utils/log"
-	"fmt"
-	"github.com/ClickHouse/clickhouse-go"
+	"context"
+	"dbproxy/utils/logger"
+	"github.com/ClickHouse/clickhouse-go/v2"
+	"github.com/spf13/viper"
+	"log"
+	"net"
+	"time"
 )
 
-var DB *sql.DB
+var DB clickhouse.Conn
 
 func Connect() {
 	var err error
-	sdn := fmt.Sprintf("tcp://%v:%v?read_timeout=%v&write_timeout=%v",
-		config.Cfg.Clickhouse.Ip,
-		config.Cfg.Clickhouse.Port,
-		config.Cfg.Clickhouse.ReadTimeout,
-		config.Cfg.Clickhouse.WriteTimeout)
-	db, err := sql.Open("clickhouse", sdn)
-	if err != nil {
-		log.L.Error(err)
-		return
-	}
+	DB, err = clickhouse.Open(&clickhouse.Options{
+		Addr: []string{net.JoinHostPort(viper.GetString("clickhouse.ip"), viper.GetString("clickhouse.port"))},
+		Auth: clickhouse.Auth{
+			Database: viper.GetString("clickhouse.database"),
+			Username: viper.GetString("clickhouse.username"),
+			Password: viper.GetString("clickhouse.password"),
+		},
+		//Debug:           true,
+		DialTimeout:     time.Duration(viper.GetInt("clickhouse.dial_timeout")) * time.Second,
+		MaxOpenConns:    viper.GetInt("clickhouse.max_open_conns"),
+		MaxIdleConns:    viper.GetInt("clickhouse.max_idle_conns"),
+		ConnMaxLifetime: time.Duration(viper.GetInt("clickhouse.conn_max_lifetime")) * time.Second,
+	})
 
-	if err = db.Ping(); err != nil {
-		if exception, ok := err.(*clickhouse.Exception); ok {
-			log.L.Errorf("[%d] %s \n%s\n", exception.Code, exception.Message, exception.StackTrace)
-		} else {
-			log.L.Error(err)
-		}
+	if err = DB.Ping(context.Background()); err != nil {
+		logger.Global.Errorf(err.Error())
+		log.Fatalf(err.Error())
 		return
 	}
-	log.L.Infof("clickhouse connet success %v:%v", config.Cfg.Clickhouse.Ip, config.Cfg.Clickhouse.Port)
-	DB = db
 }

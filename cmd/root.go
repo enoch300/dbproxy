@@ -8,10 +8,7 @@
 package cmd
 
 import (
-	"dbproxy/db/ck"
-	"dbproxy/route"
-	"dbproxy/utils/config"
-	"dbproxy/utils/log"
+	"dbproxy/app"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -21,10 +18,7 @@ var RootCmd = &cobra.Command{
 	Short:   "数据库API代理",
 	Version: "1.0.0",
 	Run: func(cmd *cobra.Command, args []string) {
-		config.LoadConfig()
-		log.NewLogger()
-		ck.Connect()
-		route.RunServer()
+		app.Run()
 	},
 }
 

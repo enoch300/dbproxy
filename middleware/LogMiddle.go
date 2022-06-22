@@ -8,7 +8,7 @@
 package middleware
 
 import (
-	"dbproxy/utils/log"
+	"dbproxy/utils/logger"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -23,6 +23,6 @@ func Log() gin.HandlerFunc {
 		end := time.Now()
 		//执行时间
 		latency := end.Sub(start)
-		log.L.Infof("%s | %s | %s | %d | %s | %d | %s", c.ClientIP(), c.Request.Method, c.Request.RequestURI, c.Writer.Status(), c.Request.Proto, latency, c.Request.UserAgent())
+		logger.Global.Infof("%s | %s | %s | %d | %s | %d | %s", c.ClientIP(), c.Request.Method, c.Request.RequestURI, c.Writer.Status(), c.Request.Proto, latency, c.Request.UserAgent())
 	}
 }

@@ -1,0 +1,19 @@
+server:
+  ip: "0.0.0.0"
+  port: 8008
+clickhouse:
+  ip: 192.168.221.232
+  port: 9000
+  database: "default"
+  username: "default"
+  password: ""
+  dial_timeout:     5
+  max_open_conns:    50
+  max_idle_conns:    50
+  conn_max_lifetime: 1
+log:
+  path: "../logs/"
+  max_size: 500
+  max_age: 3
+  max_backups: 3
+  compress: false

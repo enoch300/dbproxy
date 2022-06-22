@@ -8,16 +8,16 @@
 package route
 
 import (
-	"dbproxy/api/ck"
+	"dbproxy/api/detect"
 	"dbproxy/middleware"
-	"dbproxy/utils/config"
-	"dbproxy/utils/log"
-	"fmt"
+	"dbproxy/utils/logger"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"net"
 )
 
-func RunServer() {
+func Listen() {
 	r := gin.New()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
@@ -29,8 +29,8 @@ func RunServer() {
 	r.Use(middleware.Log())
 
 	v1 := r.Group("/api/v1")
-	v1.POST("/ck", ck.Insert)
-	if err := r.Run(fmt.Sprintf("%v:%v", config.Cfg.Server.Ip, config.Cfg.Server.Port)); err != nil {
-		log.L.Fatalf("Run app %s", err.Error())
+	v1.POST("/ck/detect", detect.Insert)
+	if err := r.Run(net.JoinHostPort(viper.GetString("server.ip"), viper.GetString("server.port"))); err != nil {
+		logger.Global.Fatalf("Run app %s", err.Error())
 	}
 }
