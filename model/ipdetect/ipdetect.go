@@ -11,6 +11,18 @@ import (
 
 var columns = make([]string, 0)
 
+type Hop struct {
+	RouteNo int     `json:"route_num"`
+	Addr    string  `json:"addr"`
+	Loss    float32 `json:"loss"`
+	Snt     int     `json:"snt"`
+	Last    float32 `json:"last"`
+	Avg     float32 `json:"avg"`
+	Best    float32 `json:"best"`
+	Wrst    float32 `json:"wrst"`
+	StDev   float64 `json:"stdev"`
+}
+
 type Row struct {
 	T            int64   `json:"t"`
 	Id           string  `json:"id"`
@@ -36,7 +48,7 @@ type Row struct {
 	PingMax      float64 `json:"ping_max"`
 	PingMin      float64 `json:"ping_min"`
 	PingLoss     float64 `json:"ping_loss"`
-	Mtr          float64 `json:"mtr"`
+	Mtr          string  `json:"mtr"`
 }
 
 func init() {
