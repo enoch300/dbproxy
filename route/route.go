@@ -10,6 +10,7 @@ package route
 import (
 	"dbproxy/api/detect"
 	"dbproxy/api/httpquality"
+	"dbproxy/api/ipdetect"
 	"dbproxy/middleware"
 	"dbproxy/utils/logger"
 	"github.com/gin-contrib/cors"
@@ -31,6 +32,7 @@ func Listen() {
 
 	v1 := r.Group("/api/v1")
 	v1.POST("/ck/detect", detect.Insert)
+	v1.POST("/ck/ipdetect", ipdetect.Insert)
 	v1.POST("/ck/httpquality", httpquality.Insert)
 	if err := r.Run(net.JoinHostPort(viper.GetString("server.ip"), viper.GetString("server.port"))); err != nil {
 		logger.Global.Fatalf("Run app %s", err.Error())
